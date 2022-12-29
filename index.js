@@ -9,4 +9,6 @@ const service = () => {
 }
 
 serve(service, {port:Deno.env.get('PORT')})
+
+//we will test this again when we have certs
 //Deno.serve({ port: Deno.env.get('PORT') }, (_req) => new Response("Hello, world"));
