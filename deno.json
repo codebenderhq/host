@@ -1,5 +1,5 @@
 {
     tasks:{
-        run: 'deno run -A --unstable index.js'
+        run: 'deno run -A  index.js'
     }
 }
