@@ -27,7 +27,7 @@ const service = async (req, ifo) => {
 
 
   try{
-      const app = await import(`${isDev ? Deno.cwd() : '/apps/home'}${appPath}/hello.js`);
+      const app = await import(`${isDev ? Deno.cwd() : '/apps/home'}${appPath}/index.js`);
 
       //import app middeware to serve      
       console.log(app);
