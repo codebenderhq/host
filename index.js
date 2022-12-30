@@ -16,9 +16,10 @@ const options = {
 const service = async (req, ifo) => {
   const { pathname } = new URL(req.url);
   const host = req.headers.get('host');
-  console.log(host, pathname);
+
+
   const appPath = host === 'space.sauveur.xyz' || host === 'localhost:9000' ? `${pathname}.dev` : `/${host}`;
-  console.log(appPath);
+
 
   if (pathname.includes(".well-known")) {
       return serveFile(req, `/apps${pathname}`);
@@ -26,7 +27,7 @@ const service = async (req, ifo) => {
 
 
   try{
-      const app = await import(`${isDev ? Deno.cwd(): ''}/apps/home${appPath}/hello.js`);
+      const app = await import(`${isDev ? Deno.cwd() : '/apps/home'}${appPath}/hello.js`);
 
       //import app middeware to serve      
       console.log(app);
