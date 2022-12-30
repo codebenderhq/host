@@ -9,7 +9,7 @@ const service = (req,ifo) => {
     const { pathname } = new URL(req.url);
     console.log(pathname)
     if(pathname.includes('.well-known')){
-        return serveFile(`/apps/${pathname}`)
+        return serveFile(`/apps${pathname}`)
     }
 
     return new Response("Hello, Dev")
