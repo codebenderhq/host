@@ -4,8 +4,14 @@ import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
  
 const port = Deno.env.get('ENV') ?  9000 : 80
 
-const service = (req) => {
-    console.log(req)
+const service = (req,ifo) => {
+
+    const { pathname } = new URL(req.url);
+    console.log(pathname)
+    if(pathname.includes('.well-known')){
+        serveFile(`/apps/${pathname}`)
+    }
+
     return new Response("Hello, Dev")
 }
 
