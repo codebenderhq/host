@@ -7,8 +7,8 @@ const port = Deno.env.get('ENV') ?  9000 : 80
 
 const options = {
     port,
-    certFile: './host.cert',
-    keyFile: "./host.key",
+    certFile: '/apps/host.cert',
+    keyFile: "./apps/host.key",
 };
 
 const service = (req,ifo) => {
