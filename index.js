@@ -2,7 +2,7 @@ import "https://deno.land/std@0.170.0/dotenv/load.ts";
 import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
 
-const port = Deno.env.get("ENV") ? 9000 : 80;
+const port = Deno.env.get("ENV") ? 9000 : 443;
 const certFile = Deno.env.get("ENV") ? "./host.cert" : "/apps/space/host.cert";
 const keyFile = Deno.env.get("ENV") ? "./host.key" : "/apps/space/host.key";
 
