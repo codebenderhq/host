@@ -2,9 +2,10 @@ import "https://deno.land/std@0.170.0/dotenv/load.ts";
 import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
 
-const port = Deno.env.get("ENV") ? 9000 : 443;
-const certFile = Deno.env.get("ENV") ? "./host.cert" : "/etc/letsencrypt/live/space.sauveur.xyz/fullchain.pem";
-const keyFile = Deno.env.get("ENV") ? "./host.key" : "/etc/letsencrypt/live/space.sauveur.xyz/privkey.pem";
+const isDev = Deno.env.get("env") === 'dev'
+const port = isDev ? 9000 : 443;
+const certFile = isDev ? "./space/host.cert" : "/etc/letsencrypt/live/space.sauveur.xyz/fullchain.pem";
+const keyFile = isDev ? "./space/host.key" : "/etc/letsencrypt/live/space.sauveur.xyz/privkey.pem";
 
 const options = {
   port,
@@ -12,14 +13,30 @@ const options = {
   keyFile
 };
 
-const service = (req, ifo) => {
+const service = async (req, ifo) => {
   const { pathname } = new URL(req.url);
-  console.log(pathname);
+  const host = req.headers.get('host');
+  console.log(host, pathname);
+  const appPath = host === 'space.sauveur.xyz' || host === 'localhost:9000' ? `${pathname}.dev` : `/${host}`;
+  console.log(appPath);
+
   if (pathname.includes(".well-known")) {
-    return serveFile(req, `/apps${pathname}`);
+      return serveFile(req, `/apps${pathname}`);
   }
 
-  return new Response("Hello, Dev");
+
+  try{
+      const app = await import(`${isDev ? Deno.cwd(): ''}/apps/home${appPath}/hello.js`);
+
+      //import app middeware to serve      
+      console.log(app);
+      return new Response("A new dawn is upon us");
+  }catch{
+      return new Response("You look lost, Happy New Year");
+  }
+
+
+
 };
 
 //serve(service, {port})

@@ -1,5 +1,5 @@
 {
   "tasks": {
-    "run": "deno run -A --watch index.js"
+    "run": "export env=dev && cd ../ && deno run -A --watch ./space/index.js"
   }
 }
