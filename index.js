@@ -4,7 +4,7 @@ import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 const port = Deno.env.get('ENV') ?  9000 : 80
 
 const service = () => {
-    return new Response("A new dawn is upon us")
+    return new Response("Hello, Dev")
 }
 
 serve(service, {port})
