@@ -4,6 +4,13 @@ import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
  
 const port = Deno.env.get('ENV') ?  9000 : 80
 
+
+const options = {
+    port,
+    certFile: './host.cert',
+    keyFile: "./host.key",
+};
+
 const service = (req,ifo) => {
 
     const { pathname } = new URL(req.url);
@@ -15,7 +22,8 @@ const service = (req,ifo) => {
     return new Response("Hello, Dev")
 }
 
-serve(service, {port})
+//serve(service, {port})
+await serveTls(service,options);
   
 //we will test this again when we have certs
 //Deno.serve({ port: Deno.env.get('PORT') }, (_req) => new Response("Hello, world"));
