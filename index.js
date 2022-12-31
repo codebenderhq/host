@@ -3,7 +3,7 @@ import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
 
 const isDev = Deno.env.get("env") === "dev";
-const port = isDev ? 9000 : 80;
+const port = isDev ? 9000 : 443;
 const certFile = isDev
   ? "./space/host.cert"
   : "/etc/letsencrypt/live/space.sauveur.xyz/fullchain.pem";
