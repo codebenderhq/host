@@ -59,6 +59,7 @@ const service = async (req, info) => {
     console.log(app);
     return new Response("A new dawn is upon us");
   } catch {
+    console.log(host);
     return new Response("You look lost, Happy New Year");
   }
 };
