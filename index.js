@@ -35,9 +35,6 @@ const service = async (req, info) => {
 
   console.log(appFolder);
 
-  if (pathname.includes(".well-known")) {
-    return serveFile(req, `/apps${pathname}`);
-  }
 
   if (pathname.includes(".init")) {
     // define command used to create the subprocess
@@ -64,7 +61,7 @@ const service = async (req, info) => {
   }
 };
 
-//serve(service, {port})
+
 await serveTls(service, options);
 
 // Deno.serve({cert: await Deno.readTextFile(certFile), key: await Deno.readTextFile(keyFile), port}, service)
