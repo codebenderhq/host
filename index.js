@@ -63,8 +63,8 @@ const service = async (req, info) => {
   }
 };
 
-serve(service, { port });
-//await serveTls(service, options);
+//serve(service, {port})
+await serveTls(service, options);
 
 // Deno.serve({cert: await Deno.readTextFile(certFile), key: await Deno.readTextFile(keyFile), port}, service)
 
