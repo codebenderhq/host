@@ -14,15 +14,18 @@ const keyFile = isDev
 const options = {
   port,
   certFile,
-  keyFile,
+  keyFile,alpnProtocols: ["h2", "http/1.1"],
 };
 
-const service = async (req, ifo) => {
-  const { pathname } = new URL(req.url);
+const service = async (req, info) => {
+  const { pathname, password, username, hash, search,searchParams } = new URL(req.url);
+//  console.log(req)
+  const uri = new URL(req.url);
+  console.log(password, username, hash, search)
   const host = req.headers.get("host");
 
   const appPath = host === "space.sauveur.xyz" || host === "localhost:9000"
-    ? `${pathname}.dev`
+    ? `/${searchParams.get('domain')}.dev`
     : `/${host}`;
   const appFolder = `${isDev ? Deno.cwd() : "/apps/home"}${appPath}`;
 
@@ -59,5 +62,7 @@ const service = async (req, ifo) => {
 //serve(service, {port})
 await serveTls(service, options);
 
+// Deno.serve({cert: await Deno.readTextFile(certFile), key: await Deno.readTextFile(keyFile), port}, service)
+
 //we will test this again when we have certs
-//Deno.serve({ port: Deno.env.get('PORT') }, (_req) => new Response("Hello, world"));
+//Deno.serve({ port }, (_req, _info) => service(_req,_info));
