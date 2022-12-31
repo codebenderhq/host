@@ -1,6 +1,6 @@
 {
   "tasks": {
     "run": "export env=dev && cd ../ && deno run -A --watch ./space/index.js",
-      "dev": "export env=dev && cd ../ && deno run -A --watch --unstable ./space/index.js"
+    "dev": "export env=dev && cd ../ && deno run -A --watch --unstable ./space/index.js"
   }
 }

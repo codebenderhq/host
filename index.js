@@ -14,18 +14,22 @@ const keyFile = isDev
 const options = {
   port,
   certFile,
-  keyFile,alpnProtocols: ["h2", "http/1.1"],
+  keyFile,
+  alpnProtocols: ["h2", "http/1.1"],
 };
 
+const dev_domains = ["space.sauveur.xyz", "localhost:9000"];
 const service = async (req, info) => {
-  const { pathname, password, username, hash, search,searchParams } = new URL(req.url);
-//  console.log(req)
+  const { pathname, password, username, hash, search, searchParams } = new URL(
+    req.url,
+  );
+  //  console.log(req)
   const uri = new URL(req.url);
-  console.log(password, username, hash, search)
+  console.log(password, username, hash, search);
   const host = req.headers.get("host");
 
-  const appPath = host === "space.sauveur.xyz" || host === "localhost:9000"
-    ? `/${searchParams.get('domain')}.dev`
+  const appPath = dev_domains.includes(host)
+    ? `/${searchParams.get("domain")}.dev`
     : `/${host}`;
   const appFolder = `${isDev ? Deno.cwd() : "/apps/home"}${appPath}`;
 
