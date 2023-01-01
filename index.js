@@ -64,7 +64,6 @@ const service = async (req, info) => {
 
 await serveTls(service, options);
 
-// Deno.serve({cert: await Deno.readTextFile(certFile), key: await Deno.readTextFile(keyFile), port}, service)
-
+ 
 //we will test this again when we have certs
 //Deno.serve({ port }, (_req, _info) => service(_req,_info));
