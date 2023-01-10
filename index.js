@@ -27,13 +27,16 @@ const service = async (req, info) => {
   const uri = new URL(req.url);
   console.log(password, username, hash, search);
   const host = req.headers.get("host");
+  // rough hack for dev developing
+  const dev_domain = searchParams.get("domain")
+  window.dev_domain = dev_domain ? dev_domain :   window.dev_domain
 
   const appPath = dev_domains.includes(host)
-    ? `/${searchParams.get("domain")}.dev`
+    ? `/${window.dev_domain}.dev`
     : `/${host}`;
   const appFolder = `${isDev ? Deno.cwd() : "/apps/home"}${appPath}`;
 
-  console.log(appFolder);
+  // console.log(appFolder);
 
 
   if (pathname.includes(".init")) {
@@ -50,13 +53,16 @@ const service = async (req, info) => {
   }
 
   try {
-    const app = await import(`${appFolder}/index.js`);
+    const {default: app} = await import(`${appFolder}/index.js`);
 
+ 
+    window._cwd = appFolder
     //import app middeware to serve
-    console.log(app);
-    return new Response("A new dawn is upon us");
-  } catch {
-    console.log(host);
+  
+    return app(req,info)
+    // return new Response("A new dawn is upon us");
+  } catch(err) {
+    console.log(host,err);
     return new Response("You look lost, Happy New Year");
   }
 };
