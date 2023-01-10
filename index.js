@@ -51,10 +51,10 @@ const service = async (req, info) => {
 
     return new Response(`repo init at ${appFolder}`);
   }
-
+  
   try {
+    console.log(appFolder)
     const {default: app} = await import(`${appFolder}/index.js`);
-
  
     window._cwd = appFolder
     //import app middeware to serve
