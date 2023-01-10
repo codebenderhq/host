@@ -53,7 +53,7 @@ const service = async (req, info) => {
   }
   
   try {
-    console.log(appFolder)
+    console.log(`${appFolder}/index.js`)
     const {default: app} = await import(`${appFolder}/index.js`);
  
     window._cwd = appFolder
