@@ -3,6 +3,7 @@ import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
 
 const isDev = Deno.env.get("env") === "dev";
+const log_path = `${isDev ? Deno.cwd() : "/apps"}/log.json`
 const port = isDev ? 9000 : 443;
 const certFile = isDev
   ? "./space/host.cert"
@@ -18,6 +19,8 @@ const options = {
   alpnProtocols: ["h2", "http/1.1"],
 };
 
+
+
 const dev_domains = ["space.sauveur.xyz", "localhost:9000"];
 const service = async (req, info) => {
   const { pathname, password, username, hash, search, searchParams } = new URL(
@@ -26,14 +29,14 @@ const service = async (req, info) => {
   //  console.log(req)
   const uri = new URL(req.url);
   console.log(password, username, hash, search);
-  const host = req.headers.get("host");
+  window._host = req.headers.get("host");
   // rough hack for dev developing
   const dev_domain = searchParams.get("domain")
   window.dev_domain = dev_domain ? dev_domain :   window.dev_domain
 
-  const appPath = dev_domains.includes(host)
+  const appPath = dev_domains.includes(window._host)
     ? `/${window.dev_domain}.dev`
-    : `/${host}`;
+    : `/${window._host}`;
   const appFolder = `${isDev ? Deno.cwd() : "/apps/home"}${appPath}`;
 
   // console.log(appFolder);
@@ -51,21 +54,64 @@ const service = async (req, info) => {
 
     return new Response(`repo init at ${appFolder}`);
   }
+
+  if(pathname === '/_log'){
+    return Response.json(get_log())
+  }
   
   try {
-    console.log(Deno.cwd())
+
+    
     const {default: app} = await import(`${appFolder}/index.js`);
  
     window._cwd = appFolder
     //import app middeware to serve
   
-    return app(req,info)
+    return await app(req,info)
     // return new Response("A new dawn is upon us");
   } catch(err) {
-    console.log(host,err);
+    
+    // dispatchEvent(new CustomEvent('log',{detail:{host,msg:err.message, err}}))
+    window.dispatchLog({msg:err.message, err})
     return new Response("You look lost, Happy New Year");
   }
 };
+
+
+
+const logger = (e) => {
+
+  let logs = get_log()
+
+  if(logs[window._host]){
+    logs[window._host].push(e.detail)
+  }else{
+    logs[window._host] = [e.detail]
+  }
+
+
+ 
+  console.log('logged to ->',log_path)
+  Deno.writeTextFileSync(log_path, JSON.stringify(logs));
+}
+
+const get_log = () => {
+
+  try{
+    const data = JSON.parse(Deno.readTextFileSync(log_path));
+    return data
+  
+  }catch{
+    return {}
+  } 
+}
+
+addEventListener('log', (e) => logger(e));
+
+// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
+window.dispatchLog = (data) => dispatchEvent(new CustomEvent('log',{detail:data}))
+
+
 
 
 await serveTls(service, options);
