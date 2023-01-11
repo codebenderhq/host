@@ -73,7 +73,7 @@ const service = async (req, info) => {
     
     // dispatchEvent(new CustomEvent('log',{detail:{host,msg:err.message, err}}))
     window.dispatchLog({msg:err.message, err})
-    return new Response("You look lost, Happy New Year");
+    return new Response("Happy new year, Wishing you success in achievement of your resolutions");
   }
 };
 
