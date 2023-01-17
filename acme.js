@@ -7,12 +7,10 @@ const port = isDev ? 9000 : 80;
 
 const service = async (req, info) => {
     const { pathname } = new URL(req.url);
- 
 
+    console.log(req)
     const host = req.headers.get('host')
- 
-    console.log(`https://${host.replace('www.','')}${pathname}`)
-    
+  
     if (pathname.includes(".well-known")) {
         return serveFile(req, `/apps${pathname}`);
     }else{
