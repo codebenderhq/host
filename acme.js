@@ -16,7 +16,7 @@ const service = async (req, info) => {
         return new Response(null, {
             status: 301,
             headers:{
-                Location: `https://${host.replace('www.','')}`
+                Location: `https://${host.replace('www.','')}${pathname.replace('/','')}`
             }
         })
     }
