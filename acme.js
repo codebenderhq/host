@@ -7,8 +7,10 @@ const port = isDev ? 9000 : 80;
 
 const service = async (req, info) => {
     const { pathname } = new URL(req.url);
+ 
 
     const host = req.headers.get('host')
+ 
     
     if (pathname.includes(".well-known")) {
         return serveFile(req, `/apps${pathname}`);
@@ -16,7 +18,7 @@ const service = async (req, info) => {
         return new Response(null, {
             status: 301,
             headers:{
-                Location: `https://${host.replace('www.','')}`
+                Location: `https://${host.replace('www.','')}${pathname}`
             }
         })
     }
