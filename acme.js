@@ -11,6 +11,7 @@ const service = async (req, info) => {
 
     const host = req.headers.get('host')
  
+    console.log(`https://${host.replace('www.','')}${pathname}`)
     
     if (pathname.includes(".well-known")) {
         return serveFile(req, `/apps${pathname}`);
