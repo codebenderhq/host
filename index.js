@@ -2,9 +2,10 @@ import "https://deno.land/std@0.170.0/dotenv/load.ts";
 import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
 
-const isDev = Deno.env.get("env") === "dev";
-const log_path = `${isDev ? Deno.cwd() : "/apps"}/log.json`
-const port = isDev ? 9000 : 443;
+Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
+
+const isDev = localStorage.getItem('dev')
+const port = localStorage.getItem('dev') ? 9000 : 443;
 const certFile = isDev
   ? "./space/host.cert"
   : "/etc/letsencrypt/live/space.sauveur.xyz/fullchain.pem";
@@ -26,7 +27,7 @@ const service = async (req, info) => {
   const { pathname, password, username, hash, search, searchParams } = new URL(
     req.url,
   );
-  //  console.log(req)
+  // console.log(Deno.cwd())
   const uri = new URL(req.url);
   console.log(password, username, hash, search);
   window._host = req.headers.get("host");
@@ -35,9 +36,9 @@ const service = async (req, info) => {
   window.dev_domain = dev_domain ? dev_domain :   window.dev_domain
 
   const appPath = dev_domains.includes(window._host)
-    ? `/${window.dev_domain}.dev`
-    : `/${window._host}`;
-  const appFolder = `${isDev ? Deno.cwd() : "/apps/home"}${appPath}`;
+    ? `${window.dev_domain}.dev`
+    : `${window._host}`;
+  const appFolder = `${isDev ? '': "/apps/home"}${appPath}`;
 
   // console.log(appFolder);
 
@@ -60,7 +61,7 @@ const service = async (req, info) => {
   }
   
   try {   
-    const {default: app} = await import(`${appFolder}/index.js`);
+    const {default: app} = await import(`${appPath}/index.js`);
  
     window._cwd = appFolder
     //import app middeware to serve
@@ -79,8 +80,9 @@ const service = async (req, info) => {
 
 const logger = (e) => {
 
-  let logs = get_log()
 
+  let logs = get_log()
+ 
   if(logs[window._host]){
     logs[window._host].push(e.detail)
   }else{
@@ -88,16 +90,17 @@ const logger = (e) => {
   }
 
 
- 
-  console.log('logged to ->',log_path)
-  Deno.writeTextFileSync(log_path, JSON.stringify(logs));
-}
+  localStorage.setItem(window._host,JSON.stringify(logs))
+  console.log('logged to ->',window._host)
+ }
 
 const get_log = () => {
 
-  try{
-    const data = JSON.parse(Deno.readTextFileSync(log_path));
-    return data
+
+  try{ 
+    const data = JSON.parse(localStorage.getItem(window._host));
+ 
+    return data ? data : {}
   
   }catch{
     return {}
