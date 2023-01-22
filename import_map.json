@@ -1,6 +1,9 @@
 {
     "imports": {
         "app.sauveur.xyz/":"/apps/home/app.sauveur.xyz/",
-        "rawk.xyz/":"/apps/home/rawk.xyz/"
+        "dash.sauveur.xyz/":"/apps/home/dash.sauveur.xyz/",
+        "rawk.xyz/":"/apps/home/rawk.xyz/",
+        "umuzi.xyz/":"/apps/home/umuzi.xyz/",
+        "oneohone.xyz/":"/apps/home/oneohone.xyz/"
     }
 }
