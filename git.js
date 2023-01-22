@@ -6,6 +6,7 @@ self.onmessage = async (e) => {
 
     try{
         const { host, isDev } = e.data;
+        console.log(host,isDev)
         const cmd = [`${isDev ? './space/' : '/apps/space/'}serve.bash`, `${isDev ? './': '/apps/home/' }${host}`];
         // create subprocess
         
