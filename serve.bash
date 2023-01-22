@@ -1,4 +1,4 @@
 #!/bin/bash
 
 
-cd ./$1 && git pull origin main
+cd $1 && git pull origin main
