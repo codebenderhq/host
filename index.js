@@ -38,7 +38,7 @@ const service = async (req, info) => {
   const appPath = dev_domains.includes(window._host)
     ? `${window.dev_domain}.dev`
     : `${window._host}`;
-  const appFolder = `${isDev ? '': "/apps/home"}${appPath}`;
+  const appFolder = `${isDev ? '': "/apps/home/"}${appPath}`;
 
   // console.log(appFolder);
 
