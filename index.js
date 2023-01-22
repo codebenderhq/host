@@ -8,10 +8,10 @@ const isDev = localStorage.getItem('dev')
 const port = localStorage.getItem('dev') ? 9000 : 443;
 const certFile = isDev
   ? "./space/host.cert"
-  : "/etc/letsencrypt/live/space.sauveur.xyz/fullchain.pem";
+  : "/etc/letsencrypt/live/ubuntu.report/fullchain.pem";
 const keyFile = isDev
   ? "./space/host.key"
-  : "/etc/letsencrypt/live/space.sauveur.xyz/privkey.pem";
+  : "/etc/letsencrypt/live/ubuntu.report/privkey.pem";
 
 const options = {
   port,
