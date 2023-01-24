@@ -21,6 +21,7 @@ const options = {
 };
 
 
+new Worker(new URL("./job.js", import.meta.url).href, { type: "module" });
 
 const dev_domains = ["space.sauveur.xyz", "localhost:9000"];
 const service = async (req, info) => {
