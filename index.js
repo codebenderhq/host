@@ -56,7 +56,7 @@ const service = async (req, info) => {
     return new Response(`repo init at ${appFolder}`);
   }
 
-  if(pathname === '/_log'){
+  if(pathname === '/_log' && searchParams.get("secret")){
     return Response.json(get_log())
   }
   
