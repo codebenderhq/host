@@ -1,9 +1,9 @@
 {
     "imports": {
-        "app.sauveur.dev/":"/Users/codebender/Documents/app.sauveur.dev/",
+        "app.sauveur.dev/":"/Users/codebender/Documents/sauveur/app.sauveur.dev/",
         "dash.sauveur.xyz/":"/Users/codebender/Documents/dash.sauveur.xyz/",
         "rawk.xyz/":"/Users/codebender/Documents/rawk.xyz/",
         "umuzi.xyz/":"/Users/codebender/Documents/umuzi.xyz/",
-        "oneohone.xyz/":"/Users/codebender/Documents/oneohone.xyz/"
+        "oneohone.dev/":"/Users/codebender/Documents/sauveur/oneohone.xyz/"
     }
 }
