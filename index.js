@@ -5,7 +5,7 @@ import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
 Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
 
 const isDev = localStorage.getItem('dev')
-const port = localStorage.getItem('dev') ? 9000 : 443;
+const port = localStorage.getItem('dev') ? 9001 : 443;
 const certFile = isDev
   ? "./space/host.cert"
   : "/etc/letsencrypt/live/ubuntu.report/fullchain.pem";
@@ -23,7 +23,7 @@ const options = {
 
 new Worker(new URL("./job.js", import.meta.url).href, { type: "module" });
 
-const dev_domains = ["space.sauveur.xyz", "localhost:9000"];
+const dev_domains = ["space.sauveur.xyz", "localhost:9001"];
 const service = async (req, info) => {
   const { pathname, password, username, hash, search, searchParams } = new URL(
     req.url,
@@ -70,7 +70,7 @@ const service = async (req, info) => {
   // }
   
   try {   
-    console.log(console.log(appPath))
+    console.log(console.log(dev_domain))
     const {default: app} = await import(`${appPath}/index.js`);
  
     window._cwd = appFolder

@@ -1,13 +1,52 @@
 
 console.log('job worker created', Deno.env.get('env'))
 
+const runJob = async (path) => {
+
+    const {default:api} = await import(`${path}_app/db/api/get.js`)
+    const {date, setDate} = await import(`${path}_app/job/api/services/index.js`)
+    const res = await api(new Request(`http://hello.com?col=job&indexName=date&index=${date.getToday()}`,{
+        headers:{
+            referer: 'app.sauveur.xyz'
+        }
+    }))
+
+    if(res.status === 200){
+        const activeJobs = res.document_data.filter(data => data.retry <=3 && data.duration > 0)
+        console.log(activeJobs, 'jobs for today')
+        activeJobs.forEach(async element => {
+
+            element.headers.body = JSON.stringify(element.payload)
+            const updateJobSpec = {
+                duration: --element.duration,
+                date: setDate(element.date.split('/')).addDays(element.interval - element.retry)
+            }
+            
+            await fetch(element.uri,element.headers).catch(err => {
+                updateJobSpec.duration = element.duration
+                updateJobSpec.retry = ++element.retry
+                updateJobSpec.date = setDate(element.date.split('/')).addDays(1)
+                console.log('failed job')
+            })
+
+            const {default:api} = await import(`${path}_app/db/api/patch.js`)
+            await api(new Request(`http://hello.com?col=job&id=${element.id}`,{
+                headers:{
+                    referer: 'app.sauveur.xyz'
+                }
+            }),{...updateJobSpec})          
+        });
+    }
+}
+
 setInterval(()=> {
+    runJob('app.sauveur.xyz/src/')
     console.log('running the jobs for today', new Date().toTimeString())
 },86400000)
 
 
 if(Deno.env.get('env')){
-    setInterval(()=> {
-        console.log('running the jobs for today', new Date().toTimeString())
-    },86400)
+    setInterval(async ()=> {
+        runJob('app.sauveur.dev/src/')
+    },8640)
 }
