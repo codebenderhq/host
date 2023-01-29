@@ -1,11 +1,10 @@
 import "https://deno.land/std@0.170.0/dotenv/load.ts";
 import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
-import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
 
 Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
 
 const isDev = localStorage.getItem('dev')
-const port = localStorage.getItem('dev') ? 9001 : 443;
+const port = localStorage.getItem('dev') ? Deno.env.get('PORT') : 443;
 const certFile = isDev
   ? "./space/host.cert"
   : "/etc/letsencrypt/live/ubuntu.report/fullchain.pem";

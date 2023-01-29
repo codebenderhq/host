@@ -3,13 +3,17 @@ console.log('job worker created', Deno.env.get('env'))
 
 const runJob = async (path) => {
 
+    console.log('running job')
     const {default:api} = await import(`${path}_app/db/api/get.js`)
+
     const {date, setDate} = await import(`${path}_app/job/api/services/index.js`)
+
     const res = await api(new Request(`http://hello.com?col=job&indexName=date&index=${date.getToday()}`,{
         headers:{
-            referer: 'app.sauveur.xyz'
+            referer: 'oneohone.xyz'
         }
     }))
+
 
     if(res.status === 200){
         const activeJobs = res.document_data.filter(data => data.retry <=3 && data.duration > 0)
@@ -26,13 +30,13 @@ const runJob = async (path) => {
                 updateJobSpec.duration = element.duration
                 updateJobSpec.retry = ++element.retry
                 updateJobSpec.date = setDate(element.date.split('/')).addDays(1)
-                console.log('failed job')
+                console.log('job failed')
             })
 
             const {default:api} = await import(`${path}_app/db/api/patch.js`)
             await api(new Request(`http://hello.com?col=job&id=${element.id}`,{
                 headers:{
-                    referer: 'app.sauveur.xyz'
+                    referer: 'oneohone.xyz'
                 }
             }),{...updateJobSpec})          
         });
@@ -40,13 +44,13 @@ const runJob = async (path) => {
 }
 
 setInterval(()=> {
-    runJob('app.sauveur.xyz/src/')
+    runJob('oneohone.xyz/src/')
     console.log('running the jobs for today', new Date().toTimeString())
 },86400000)
 
 
 if(Deno.env.get('env')){
     setInterval(async ()=> {
-        runJob('app.sauveur.dev/src/')
+        runJob('oneohone.dev/src/')
     },8640)
 }
