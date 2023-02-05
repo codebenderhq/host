@@ -71,8 +71,7 @@ const service = async (req, info) => {
     
     window._cwd = appFolder
     //import app middeware to serve
-  
-    // console.log(appFolder)
+ 
     return await app(req,info)
     // return new Response("A new dawn is upon us");
   } catch(err) {
