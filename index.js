@@ -24,19 +24,16 @@ new Worker(new URL("./job.js", import.meta.url).href, { type: "module" });
 
 const dev_domains = ["space.sauveur.xyz", "localhost:9001"];
 const service = async (req, info) => {
-  const { pathname, password, username, hash, search, searchParams } = new URL(
+  const { pathname, hostname, username, hash, search, searchParams } = new URL(
     req.url,
   );
-  // console.log(Deno.cwd())
-  const uri = new URL(req.url);
-  // console.log(password, username, hash, search);
+ 
   window._host = req.headers.get("host");
   // rough hack for dev developing
-  const dev_domain = searchParams.get("domain")
-  window.dev_domain = dev_domain ? dev_domain :   window.dev_domain
+  window.dev_domain = hostname.split('.')[0].replace('-','.')
 
-  const appPath = dev_domains.includes(window._host)
-    ? `${window.dev_domain}.dev`
+  const appPath = dev_domains.includes(window._host.split('.').pop())
+    ? `${hostname.split('.')[0].replace('-','.')}.dev`
     : `${window._host}`;
   const appFolder = `${isDev ? '': "/apps/home/"}${appPath}`;
 
@@ -71,7 +68,8 @@ const service = async (req, info) => {
   try {   
 
 
-    const {default: app} = await import(`${appPath}/index.js`);
+
+    const {default: app} = await import(`${appFolder}/index.js`);
  
     window._cwd = appFolder
     //import app middeware to serve

@@ -52,5 +52,5 @@ setInterval(()=> {
 if(Deno.env.get('env')){
     setInterval(async ()=> {
         runJob('oneohone.dev/src/')
-    },8640)
+    },864000)
 }
