@@ -6,10 +6,10 @@ Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
 const isDev = localStorage.getItem('dev')
 const port = localStorage.getItem('dev') ? Deno.env.get('PORT') : 443;
 const certFile = isDev
-  ? "./space/host.cert"
+  ? "./host.cert"
   : "/etc/letsencrypt/live/ubuntu.report/fullchain.pem";
 const keyFile = isDev
-  ? "./space/host.key"
+  ? "./host.key"
   : "/etc/letsencrypt/live/ubuntu.report/privkey.pem";
 
 const options = {
@@ -30,12 +30,12 @@ const service = async (req, info) => {
  
   window._host = req.headers.get("host");
   // rough hack for dev developing
-  window.dev_domain = hostname.split('.')[0].replace('-','.')
+  window.dev_domain = hostname.split('.')[0].replace('-','.').replace('_','.')
 
   const appPath = dev_domains.includes(window._host.split('.').pop())
-    ? `${hostname.split('.')[0].replace('-','.')}.dev`
+    ? `${hostname.split('.')[0].replace('-','.').replace('_','.')}.dev`
     : `${window._host}`;
-  const appFolder = `${isDev ? '': "/apps/home/"}${appPath}`;
+  const appFolder = `${Deno.env.get('MAIN_PATH') ? Deno.env.get('MAIN_PATH')  : "/apps/home/"}${appPath}`;
 
   // console.log(appPath);
 
@@ -66,14 +66,13 @@ const service = async (req, info) => {
   // }
   
   try {   
-
-    console.log(Deno.cwd())
-
-    const {default: app} = await import(`${appFolder}/index.js`);
  
+    const {default: app} = await import(`${appFolder}/index.js`);
+   
     window._cwd = appFolder
     //import app middeware to serve
   
+    // console.log(appFolder)
     return await app(req,info)
     // return new Response("A new dawn is upon us");
   } catch(err) {
