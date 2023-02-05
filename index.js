@@ -69,6 +69,7 @@ const service = async (req, info) => {
  
     const {default: app} = await import(`${appFolder}/index.js`);
    
+    console.log(Deno.cwd())
     window._cwd = appFolder
     //import app middeware to serve
   
