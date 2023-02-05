@@ -57,13 +57,7 @@ const service = async (req, info) => {
     return Response.json(get_log())
   }
   
-  // if(pathname === '/_git'){
-  //   // https://deno.land/manual@v1.29.4/runtime/workers
-  //   const git_worker = new Worker(new URL(`${isDev ? '.' : '/apps/space'}/git.js`, import.meta.url).href, { type: "module" });
-
-  //   git_worker.postMessage({ host: appPath, isDev });
-  //   return new Response('git process run')
-  // }
+ 
   
   try {   
  
