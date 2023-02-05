@@ -57,8 +57,7 @@ const service = async (req, info) => {
     return Response.json(get_log())
   }
   
- 
-  
+
   try {   
  
     const {default: app} = await import(`${appFolder}/index.js`);
