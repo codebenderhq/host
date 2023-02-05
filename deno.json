@@ -2,7 +2,8 @@
   "tasks": {
     "run": "export env=dev && export SERVER_KEY=test_12345 && cd ../ && deno run -A  --unsafely-ignore-certificate-errors --watch ./space/index.js",
     "dev": "export env=dev && export SERVER_KEY=test_12345 && cd ../ && deno run -A --watch --unstable  --unsafely-ignore-certificate-errors --import-map=./space/import_map.dev.json ./space/index.js",
-    "ssh": "ssh -i /Users/codebender/the-space.pem  akani@space.sauveur.xyz"
+    "ssh": "ssh -i /Users/codebender/the-space.pem  akani@space.sauveur.xyz",
+    "start": "cd /apps/ && /usr/local/bin/deno run -A --watch=/apps/ --import-map=/apps/space/import_map.json /apps/space/index.js"
   },
   "lock": false
 }
