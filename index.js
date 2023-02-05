@@ -67,7 +67,7 @@ const service = async (req, info) => {
   
   try {   
 
-
+    console.log(Deno.cwd())
 
     const {default: app} = await import(`${appFolder}/index.js`);
  
