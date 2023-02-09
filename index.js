@@ -3,6 +3,8 @@ import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 
 Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
 
+localStorage.clear()
+
 const isDev = localStorage.getItem('dev')
 const port = localStorage.getItem('dev') ? Deno.env.get('PORT') : 443;
 const certFile = isDev
