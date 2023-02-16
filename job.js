@@ -44,13 +44,13 @@ const runJob = async (path) => {
 }
 
 setInterval(()=> {
-    runJob('oneohone.xyz/src/')
+    runJob('sauveur.cloud/src/')
     console.log('running the jobs for today', new Date().toTimeString())
 },86400000)
 
 
 if(Deno.env.get('env')){
     setInterval(async ()=> {
-        runJob('oneohone.dev/src/')
+        runJob('sauveur.cloud/src/')
     },864000)
 }

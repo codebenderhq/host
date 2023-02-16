@@ -9,10 +9,10 @@ const isDev = localStorage.getItem('dev')
 const port = localStorage.getItem('dev') ? Deno.env.get('PORT') : 443;
 const certFile = isDev
   ? "./host.cert"
-  : "/etc/letsencrypt/live/ubuntu.report/fullchain.pem";
+  : "/etc/letsencrypt/live/space.sauveur.xyz-0002/fullchain.pem";
 const keyFile = isDev
   ? "./host.key"
-  : "/etc/letsencrypt/live/ubuntu.report/privkey.pem";
+  : "/etc/letsencrypt/live/space.sauveur.xyz-0002/privkey.pem";
 
 const options = {
   port,

@@ -1,10 +1,10 @@
 {
     "imports": {
         "/root/": "/Users/cp366613/rawkakani/commerce/",
-        "app.sauveur.dev/":"/Users/codebender/Documents/sauveur/app.sauveur.dev/",
-        "dash.sauveur.dev/":"/Users/codebender/Documents/sauveur/dash.sauveur.dev/",
-        "rawk.xyz/":"/Users/codebender/Documents/sauveur/rawk.xyz/",
-        "umuzi.xyz/":"/Users/codebender/Documents/sauveur/umuzi.xyz/",
-        "oneohone.dev/":"/Users/codebender/Documents/sauveur/oneohone.dev/"
+        "app.sauveur.dev/":"/Users/cp366613/rawkakani/commerce/app.sauveur.dev/",
+        "dash.sauveur.dev/":"/Users/cp366613/rawkakani/commerce/dash.sauveur.dev/",
+        "rawk.xyz/":"/Users/cp366613/rawkakani/commerce/rawk.xyz/",
+        "umuzi.xyz/":"/Users/cp366613/rawkakani/commerce/umuzi.xyz/",
+        "oneohone.dev/":"/Users/cp366613/rawkakani/commerce/oneohone.dev/"
     }
 }

@@ -1,4 +1,12 @@
 module default {
+    type User {
+        required property email -> str{
+            constraint exclusive;
+        }
+        property auth -> str;
+        required property name -> str;
+    }
+
     type Bye {
         required property name -> str;
         property description -> str;
@@ -26,6 +34,9 @@ module default {
         property items -> json;
         link to -> Brand;
         property from -> str;
+        property ref -> str {
+            constraint exclusive;
+        }
         property paid -> bool;
         property metadata -> json;
     }
