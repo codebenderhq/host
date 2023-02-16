@@ -34,9 +34,12 @@ module default {
         property items -> json;
         link to -> Brand;
         property from -> str;
+<<<<<<< HEAD
         property ref -> str {
             constraint exclusive;
         }
+=======
+>>>>>>> c1fcbff (first migration step)
         property paid -> bool;
         property metadata -> json;
     }
