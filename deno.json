@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "run": "export env=dev && export SERVER_KEY=test_12345 && cd ../ && deno run -A  --unsafely-ignore-certificate-errors --watch ./space/index.js",
+    "run": "export env=dev && export SERVER_KEY=test_12345 && cd ../ && deno run -A  --unsafely-ignore-certificate-errors --watch ./index.js",
     "dev": "export env=dev && export CERT=./host.cert && export KEY=./host.key && export SERVER_KEY=test_12345 && deno run -A --watch --unstable  --unsafely-ignore-certificate-errors --import-map=./import_map.json ./index.js"
   },
   "lock": false
