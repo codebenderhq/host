@@ -67,7 +67,13 @@ const service = async (req, info) => {
     console.log(window._cwd)
     //import app middeware to serve
     console.log(pathnameArray.join('/'))
-    return middleware(req,info)
+    // return middleware(req,info)
+    return new Response(null,{
+      status: 307,
+      headers: {
+        Location: 'https://youtu.be/H2zHQ4yaPss'
+      }
+    });
     // return new Response("A new dawn is upon us");
   } catch(err) {
     
