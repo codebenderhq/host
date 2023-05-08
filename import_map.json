@@ -1,8 +1,5 @@
 {
     "imports": {
-        "app.sauveur.xyz/":"/apps/home/app.sauveur.xyz/",
-        "sauveur.cloud/":"/apps/home/sauveur.cloud/",
-        "sauveur.shop/":"/apps/home/sauveur.shop/",
-        "oneohone.xyz/":"/apps/home/oneohone.xyz/"
+        "app/" : "/"
     }
 }

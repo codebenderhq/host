@@ -1,18 +1,15 @@
 import "https://deno.land/std@0.170.0/dotenv/load.ts";
 import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
+import middleware from "https://deno.land/x/sauveur@0.0.7-pre/index.js"
 
-Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
+// Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
 
-localStorage.clear()
+// localStorage.clear()
 
-const isDev = localStorage.getItem('dev')
-const port = localStorage.getItem('dev') ? Deno.env.get('PORT') : 443;
-const certFile = isDev
-  ? "./host.cert"
-  : "/etc/letsencrypt/live/space.sauveur.xyz-0002/fullchain.pem";
-const keyFile = isDev
-  ? "./host.key"
-  : "/etc/letsencrypt/live/space.sauveur.xyz-0002/privkey.pem";
+// const isDev = localStorage.getItem('dev')
+const port = Deno.env.get("env") === "dev" ? 9090 : 443;
+const certFile = Deno.env.get("CERT");
+const keyFile =  Deno.env.get("KEY");
 
 const options = {
   port,
@@ -24,36 +21,36 @@ const options = {
 
 new Worker(new URL("./job.js", import.meta.url).href, { type: "module" });
 
-const dev_domains = ["space.sauveur.xyz", "localhost:9001"];
+// const dev_domains = ["space.sauveur.xyz", "localhost:9001"];
 const service = async (req, info) => {
   const { pathname, hostname, username, hash, search, searchParams } = new URL(
     req.url,
   );
  
-  window._host = req.headers.get("host");
+  // window._host = req.headers.get("host");
   // rough hack for dev developing
-  window.dev_domain = hostname.split('.')[0].replace('-','.').replace('_','.')
+  // window.dev_domain = hostname.split('.')[0].replace('-','.').replace('_','.')
 
-  const appPath = dev_domains.includes(window._host.split('.').pop())
-    ? `${hostname.split('.')[0].replace('-','.').replace('_','.')}.dev`
-    : `${window._host}`;
-  const appFolder = `${Deno.env.get('MAIN_PATH') ? Deno.env.get('MAIN_PATH')  : "/apps/home/"}${appPath}`;
+  // const appPath = dev_domains.includes(window._host.split('.').pop())
+  //   ? `${hostname.split('.')[0].replace('-','.').replace('_','.')}.dev`
+  //   : `${window._host}`;
+  // const appFolder = `${Deno.env.get('MAIN_PATH') ? Deno.env.get('MAIN_PATH')  : "/apps/home/"}${appPath}`;
 
   // console.log(appPath);
 
 
-  if (pathname.includes(".init")) {
-    // define command used to create the subprocess
-    const cmd = ["git", "init", "--bare", `${appFolder}`];
+  // if (pathname.includes(".init")) {
+  //   // define command used to create the subprocess
+  //   const cmd = ["git", "init", "--bare", `${appFolder}`];
 
-    // create subprocess
-    const p = Deno.run({ cmd });
+  //   // create subprocess
+  //   const p = Deno.run({ cmd });
 
-    // await its completion
-    await p.status();
+  //   // await its completion
+  //   await p.status();
 
-    return new Response(`repo init at ${appFolder}`);
-  }
+  //   return new Response(`repo init at ${appFolder}`);
+  // }
 
   if(pathname === '/_log' && searchParams.get("secret")){
     return Response.json(get_log())
@@ -62,12 +59,15 @@ const service = async (req, info) => {
 
   try {   
  
-    const {default: app} = await import(`${appFolder}/index.js`);
+    // const {default: app} = await import(`${appFolder}/index.js`);
     
-    window._cwd = appFolder
+    const pathnameArray = pathname.replace('/','').split('/')
+  
+    // window._cwd = `/apps/${pathnameArray.shift()}`
+    console.log(window._cwd)
     //import app middeware to serve
- 
-    return await app(req,info)
+    console.log(pathnameArray.join('/'))
+    return middleware(req,info)
     // return new Response("A new dawn is upon us");
   } catch(err) {
     
@@ -112,8 +112,6 @@ addEventListener('log', (e) => logger(e));
 
 // https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
 window.dispatchLog = (data) => dispatchEvent(new CustomEvent('log',{detail:data}))
-
-
 
 
 await serveTls(service, options);
