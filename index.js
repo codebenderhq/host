@@ -76,10 +76,11 @@ const service = async (req, info) => {
       const r=readerFromStreamReader(rdr);
       const f=await Deno.open(`./${appName}.zip`, {create: true, write: true});
       await Deno.copy(r, f);
-      
+      await Deno.mkdir(`/apps/${appName}`, { recursive: true });
+    
       f.close()
       // define command used to create the subprocess
-      const cmd = ["unzip","-o", `${appName}.zip`, "-d",`/apps/${appName}`];
+      const cmd = ["unzip","-o", `${appName}.zip`, "-d",`/apps/${appName}/src`];
       
       // create subprocess
       const p = Deno.run({ cmd });
