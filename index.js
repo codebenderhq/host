@@ -1,6 +1,8 @@
 import "https://deno.land/std@0.170.0/dotenv/load.ts";
 import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 import middleware from "https://deno.land/x/sauveur@0.0.7-pre/index.js"
+import {Octokit} from 'npm:octokit'
+import {readerFromStreamReader} from "https://deno.land/std/streams/mod.ts";
 
 // Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
 
@@ -27,43 +29,72 @@ const service = async (req, info) => {
     req.url,
   );
  
-  // window._host = req.headers.get("host");
-  // rough hack for dev developing
-  // window.dev_domain = hostname.split('.')[0].replace('-','.').replace('_','.')
-
-  // const appPath = dev_domains.includes(window._host.split('.').pop())
-  //   ? `${hostname.split('.')[0].replace('-','.').replace('_','.')}.dev`
-  //   : `${window._host}`;
-  // const appFolder = `${Deno.env.get('MAIN_PATH') ? Deno.env.get('MAIN_PATH')  : "/apps/home/"}${appPath}`;
-
-  // console.log(appPath);
-
-
-  // if (pathname.includes(".init")) {
-  //   // define command used to create the subprocess
-  //   const cmd = ["git", "init", "--bare", `${appFolder}`];
-
-  //   // create subprocess
-  //   const p = Deno.run({ cmd });
-
-  //   // await its completion
-  //   await p.status();
-
-  //   return new Response(`repo init at ${appFolder}`);
-  // }
+      
+  const pathnameArray = pathname.replace('/','').split('/')
+  window._cwd = `/apps/${pathnameArray.shift()}`
 
   if(pathname === '/_log' && searchParams.get("secret")){
     return Response.json(get_log())
   }
   
+  if(pathname === '/octo'){
+    let data = await req.json()
+    const deployMeta = {id:data.workflow_run.id, action:data.action, repo:data.repository.name}
+    const appName = deployMeta.repo
+    const run_id = deployMeta.id
+    const octokit = new Octokit({
+      auth: Deno.env.get('OCTO')
+  })
+  
+  if(deployMeta.action === "completed"){
+
+    const res = await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts', {
+      owner: 'codebenderhq',
+      run_id,
+      repo: appName
+  })
+   
+  // console.log(res.data)
+  const latest_download = res.data.artifacts.shift()
+  
+  const download = await octokit.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
+      owner: 'codebenderhq',
+      repo: appName,
+      artifact_id: latest_download.id,
+      archive_format: 'zip',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28',
+        'accept': ' application/vnd.github+json'
+      }
+    })
+    
+  const rsp=await fetch(download.url)
+  const rdr=rsp.body?.getReader();
+    
+  if(rdr) {
+      const r=readerFromStreamReader(rdr);
+      const f=await Deno.open(`./${appName}.zip`, {create: true, write: true});
+      await Deno.copy(r, f);
+      
+      f.close()
+      // define command used to create the subprocess
+      const cmd = ["unzip", `${appName}.zip`, "-d",`/apps/${appName}`];
+      
+      // create subprocess
+      const p = Deno.run({ cmd });
+      
+      // await its completion
+      await p.status();
+  
+  }
+  }
+
+    return new Response("A new dawn is upon us");
+  }
 
   try {   
  
     // const {default: app} = await import(`${appFolder}/index.js`);
-    
-    const pathnameArray = pathname.replace('/','').split('/')
-  
-    // window._cwd = `/apps/${pathnameArray.shift()}`
     console.log(window._cwd)
     //import app middeware to serve
     console.log(pathnameArray.join('/'))
