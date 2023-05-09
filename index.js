@@ -108,12 +108,8 @@ const service = async (req, info) => {
       return middleware(_req, info)
     }
     
-    return new Response(null,{
-      status: 307,
-      headers: {
-        Location: 'https://youtu.be/H2zHQ4yaPss'
-      }
-    });
+    window._cwd = `/apps/home`
+    return middleware(req, info)
 
   } catch(err) {
     
