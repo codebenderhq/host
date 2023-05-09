@@ -7,7 +7,7 @@
 
  const hello =  async (req, data) => {
 
-    console.log(req.method)
+    console.log(data)
     return {status:200, data}
 }
 

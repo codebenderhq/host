@@ -1,6 +1,6 @@
 import "https://deno.land/std@0.170.0/dotenv/load.ts";
 import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
-import middleware from "https://deno.land/x/sauveur@0.0.7-pre/index.js"
+import middleware from " https://deno.land/x/sauveur@0.1.3-pre/index.js"
 import {Octokit} from 'npm:octokit'
 import {readerFromStreamReader} from "https://deno.land/std/streams/mod.ts";
 
@@ -31,13 +31,13 @@ const service = async (req, info) => {
  
       
   const pathnameArray = pathname.replace('/','').split('/')
-  window._cwd = `/apps/${pathnameArray.shift()}`
+  window._cwd = `./app/${pathnameArray.shift()}`
 
-  if(pathname === '/_log' && searchParams.get("secret")){
-    return Response.json(get_log())
-  }
+  // if(pathname === '/_log' && searchParams.get("secret")){
+  //   return Response.json(get_log())
+  // }
   
-  if(pathname === '/octo'){
+  if(pathname === '/octo' && req.method === 'POST'){
     let data = await req.json()
     const deployMeta = {id:data.workflow_run.id, action:data.action, repo:data.repository.name}
     const appName = deployMeta.repo
@@ -78,7 +78,7 @@ const service = async (req, info) => {
       
       f.close()
       // define command used to create the subprocess
-      const cmd = ["unzip", `${appName}.zip`, "-d",`/apps/${appName}`];
+      const cmd = ["unzip","-o", `${appName}.zip`, "-d",`/apps/${appName}`];
       
       // create subprocess
       const p = Deno.run({ cmd });
@@ -95,19 +95,19 @@ const service = async (req, info) => {
   try {   
  
     // const {default: app} = await import(`${appFolder}/index.js`);
-    console.log(window._cwd)
     //import app middeware to serve
-    console.log(pathnameArray.join('/'))
-    // return middleware(req,info)
-    return new Response(null,{
-      status: 307,
-      headers: {
-        Location: 'https://youtu.be/H2zHQ4yaPss'
-      }
+    const _req = new Request(`https://${req.headers.get("host")}/${pathnameArray.join('/')}`,{
+      method: req.method,
+      headers: Object.fromEntries(req.headers),
+      body: req.body
     });
-    // return new Response("A new dawn is upon us");
+ 
+    
+    return middleware(_req, info)
+    return new Response("A new dawn is upon us");
   } catch(err) {
     
+    console.log(err)
     // dispatchEvent(new CustomEvent('log',{detail:{host,msg:err.message, err}}))
     window.dispatchLog({msg:err.message, err})
     return new Response("Happy new year, Wishing you success in achievement of your resolutions");
