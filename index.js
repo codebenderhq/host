@@ -32,7 +32,6 @@ const service = async (req, info) => {
       
   const pathnameArray = pathname.replace('/','').split('/')
   window._cwd = `/apps/${pathnameArray.shift()}`
-  console.log(window._cwd)
 
   // if(pathname === '/_log' && searchParams.get("secret")){
   //   return Response.json(get_log())
