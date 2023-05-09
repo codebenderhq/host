@@ -31,7 +31,7 @@ const service = async (req, info) => {
  
       
   const pathnameArray = pathname.replace('/','').split('/')
-  window._cwd = `./app/${pathnameArray.shift()}`
+  window._cwd = `/apps/${pathnameArray.shift()}`
 
   // if(pathname === '/_log' && searchParams.get("secret")){
   //   return Response.json(get_log())
@@ -113,7 +113,7 @@ const service = async (req, info) => {
         Location: 'https://youtu.be/H2zHQ4yaPss'
       }
     });
-    
+
   } catch(err) {
     
     console.log(err)
