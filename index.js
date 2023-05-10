@@ -28,10 +28,13 @@ const service = async (req, info) => {
   const { pathname, hostname, username, hash, search, searchParams } = new URL(
     req.url,
   );
- 
-      
-  const pathnameArray = pathname.replace('/','').split('/')
+
+  const uri = `${req.headers.get('referer') ? req.headers.get('referer') :  `https://${req.headers.get("host")}`}${pathname}`
+  const {pathname:newPathname} = new URL(uri)
+
+  const pathnameArray = newPathname.replace('/','').split('/')
   window._cwd = `/apps/${pathnameArray.shift()}`
+  // console.log(window._cwd)
 
   // if(pathname === '/_log' && searchParams.get("secret")){
   //   return Response.json(get_log())
@@ -97,12 +100,14 @@ const service = async (req, info) => {
  
     // const {default: app} = await import(`${appFolder}/index.js`);
     //import app middeware to serve
-    const _req = new Request(`https://${req.headers.get("host")}/${pathnameArray.join('/')}`,{
+    const sanatizedUri = `https://${req.headers.get("host")}/${pathnameArray.join('/')}`
+
+    const _req = new Request(sanatizedUri,{
       method: req.method,
       headers: Object.fromEntries(req.headers),
       body: req.body
     });
- 
+   
     
     if(pathname !== '/'){
       return middleware(_req, info)
