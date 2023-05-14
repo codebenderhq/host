@@ -100,15 +100,17 @@ const service = async (req, info) => {
  
     // const {default: app} = await import(`${appFolder}/index.js`);
     //import app middeware to serve
-    const sanatizedUri = `https://${req.headers.get("host")}/${pathnameArray.join('/')}`
+    // console.log(pathnameArray,pathname)
+    const sanatizedUri = `https://${req.headers.get("host")}/${pathname.includes('.') ? pathnameArray.pop() : pathnameArray.join('/')}`
 
     const _req = new Request(sanatizedUri,{
       method: req.method,
       headers: Object.fromEntries(req.headers),
       body: req.body
     });
-   
     
+
+
     if(pathname !== '/'){
       return middleware(_req, info)
     }
