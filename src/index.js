@@ -29,11 +29,11 @@ const service = async (req, info) => {
     req.url,
   );
 
-  const uri = `${req.headers.get('referer') ? req.headers.get('referer') :  `https://${req.headers.get("host")}`}${pathname}`
-  const {pathname:newPathname} = new URL(uri)
-
-  const pathnameArray = newPathname.replace('/','').split('/')
-  window._cwd = `/apps/${pathnameArray.shift()}`
+//  const uri = `${req.headers.get('referer') ? req.headers.get('referer') :  `https://${req.headers.get("host")}`}${pathname}`
+//  const {pathname:newPathname} = new URL(uri)
+//
+//  const pathnameArray = newPathname.replace('/','').split('/')
+//  window._cwd = `/apps/${pathnameArray.shift()}`
   // console.log(window._cwd)
 
   // if(pathname === '/_log' && searchParams.get("secret")){
@@ -98,24 +98,8 @@ const service = async (req, info) => {
 
   try {   
  
-    // const {default: app} = await import(`${appFolder}/index.js`);
-    //import app middeware to serve
-    // console.log(pathnameArray,pathname)
-    const sanatizedUri = `https://${req.headers.get("host")}/${pathname.includes('.') ? pathnameArray.pop() : pathnameArray.join('/')}`
-
-    const _req = new Request(sanatizedUri,{
-      method: req.method,
-      headers: Object.fromEntries(req.headers),
-      body: req.body
-    });
-    
-
-
-    if(pathname !== '/'){
-      return middleware(_req, info)
-    }
-    
-    window._cwd = `/apps/home`
+    window._cwd = `/apps/${req.headers.get("host")}`
+    console.log(window._cwd)
     return middleware(req, info)
 
   } catch(err) {
