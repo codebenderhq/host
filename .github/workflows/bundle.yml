@@ -1,4 +1,4 @@
-name: Bundle Sauveur Deploy
+name: Bundle host
 on: [push]
 
 jobs:
