@@ -96,7 +96,7 @@ const service = async (req, info) => {
         const cmd = [
           "unzip",
           "-o",
-          `${appName}.zip`,
+          `./deploy/${appName}.zip`,
           "-d",
           `/apps/${appName}/src`,
         ];
