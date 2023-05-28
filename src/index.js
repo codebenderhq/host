@@ -1,6 +1,6 @@
 import "https://deno.land/std@0.170.0/dotenv/load.ts";
 import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
-import middleware from "https://deno.land/x/sauveur@0.1.4-pre/index.js"
+import middleware from "https://deno.land/x/sauveur@0.1.5/index.js"
 import {Octokit} from 'npm:octokit'
 import {readerFromStreamReader} from "https://deno.land/std/streams/mod.ts";
 
