@@ -1,43 +1,51 @@
 import "https://deno.land/std@0.170.0/dotenv/load.ts";
-import { serve, serveTls } from "https://deno.land/std@0.170.0/http/server.ts";
 import middleware from "https://deno.land/x/sauveur@0.1.5/index.js";
 import { Octokit } from "npm:octokit";
 import { readerFromStreamReader } from "https://deno.land/std/streams/mod.ts";
+import { serveFile } from "https://deno.land/std@0.170.0/http/file_server.ts";
 
-// Deno.env.get("env") === "dev" ? localStorage.setItem('dev',true) : ''
+const deploy = async (reader,name) => {
+  let time = 0;
+  const appPath =  `/deploy/${name}.tar.gz`
+//  to be able to test locally will move this to env variables when stable
+//  const appPath = `./deploy/${name}.tar.gz`
+  const intervalID = setInterval(() => time += 1);
+  const f = await Deno.open(appPath, {
+    create: true,
+    write: true,
+  });
+  await Deno.copy(readerFromStreamReader(reader), f);
+  await f.close();
 
-// localStorage.clear()
+  const deployWorker = new Worker(
+    new URL("./worker.js", import.meta.url).href,
+    { type: "module" },
+    );
+  deployWorker.postMessage({ path: appPath });
 
-// const isDev = localStorage.getItem('dev')
-const port = Deno.env.get("env") === "dev" ? 9090 : 443;
-const certFile = Deno.env.get("CERT");
-const keyFile = Deno.env.get("KEY");
+  clearInterval(intervalID);
+  return time;
+};
+
+const decoder = new TextDecoder("utf-8");
+
+const port = Deno.env.get("env") === "dev" ? 9091 : 443;
+const cert = decoder.decode(await Deno.readFile(Deno.env.get("CERT")));
+const key =  decoder.decode(await Deno.readFile(Deno.env.get("KEY")));
 
 const options = {
   port,
-  certFile,
-  keyFile,
-  alpnProtocols: ["h2", "http/1.1"],
-};
+  key,
+  cert,
 
+};
 // new Worker(new URL("./job.js", import.meta.url).href, { type: "module" });
 
-// const dev_domains = ["space.sauveur.xyz", "localhost:9001"];
+const special_domains = ["sauveur.cloud", "sauveur.shop"];
 const service = async (req, info) => {
   const { pathname, hostname, username, hash, search, searchParams } = new URL(
     req.url,
   );
-
-  //  const uri = `${req.headers.get('referer') ? req.headers.get('referer') :  `https://${req.headers.get("host")}`}${pathname}`
-  //  const {pathname:newPathname} = new URL(uri)
-  //
-  //  const pathnameArray = newPathname.replace('/','').split('/')
-  //  window._cwd = `/apps/${pathnameArray.shift()}`
-  // console.log(window._cwd)
-
-  // if(pathname === '/_log' && searchParams.get("secret")){
-  //   return Response.json(get_log())
-  // }
 
   if (pathname === "/octo" && req.method === "POST") {
     let data = await req.json();
@@ -112,50 +120,45 @@ const service = async (req, info) => {
     return new Response("A new dawn is upon us");
   }
 
+  if (pathname === "/deploy" && req.method === "POST") {
+    console.time("saving file");
+    const reader = req?.body?.getReader();
+    const deployResp = await deploy(reader, searchParams.get('name'));
+    console.timeEnd("saving file");
+    console.log(deployResp, "ms");
+    return new Response("deployed");
+  }
+
   try {
     window._cwd = `/apps/${req.headers.get("host")}`;
     console.log(window._cwd);
     return middleware(req, info);
   } catch (err) {
-    console.log(err);
-    // dispatchEvent(new CustomEvent('log',{detail:{host,msg:err.message, err}}))
-    window.dispatchLog({ msg: err.message, err });
+
+
     return new Response(
       "Happy new year, Wishing you success in achievement of your resolutions",
     );
   }
 };
 
-const logger = (e) => {
-  let logs = get_log();
+Deno.env.get("env") === "dev" ? Deno.serve(service) : Deno.serve(options, service);
 
-  if (logs[window._host]) {
-    logs[window._host].push(e.detail);
+//ACME service
+Deno.serve({port:Deno.env.get("env") === "dev" ? 9003 : 80},(req) => {
+  const { pathname } = new URL(req.url);
+
+  console.log(req);
+  const host = req.headers.get("host");
+
+  if (pathname.includes(".well-known")) {
+    return serveFile(req, `/apps${pathname}`);
   } else {
-    logs[window._host] = [e.detail];
+    return new Response(null, {
+      status: 301,
+      headers: {
+        Location: `https://${host.replace("www.", "")}${pathname}`,
+      },
+    });
   }
-
-  localStorage.setItem(window._host, JSON.stringify(logs));
-  console.log("logged to ->", window._host);
-};
-
-const get_log = () => {
-  try {
-    const data = JSON.parse(localStorage.getItem(window._host));
-
-    return data ? data : {};
-  } catch {
-    return {};
-  }
-};
-
-addEventListener("log", (e) => logger(e));
-
-// https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
-window.dispatchLog = (data) =>
-  dispatchEvent(new CustomEvent("log", { detail: data }));
-
-await serveTls(service, options);
-
-//we will test this again when we have certs
-//Deno.serve({ port }, (_req, _info) => service(_req,_info));
+})
